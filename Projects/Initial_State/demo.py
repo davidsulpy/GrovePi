@@ -9,7 +9,7 @@ streamer = Streamer(bucket_name="GrovePi",
     ini_file_location="./isstreamer.ini",
     buffer_size=30)
 
-dht_sensor_port = 8		# Connect the DHt sensor to port 8
+dht_sensor_port = 7		# Connect the DHt sensor to port 7
 sound_sensor = 0        # port A0
 light_sensor = 1        # port A1
 ult_ranger = 4
@@ -85,6 +85,6 @@ if __name__ == "__main__":
     t_light.start()
 
     stop = raw_input("press [ENTER] to end")
-    
+
     stop_event.set()
     streamer.close()
