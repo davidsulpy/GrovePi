@@ -22,17 +22,15 @@ def stream_temp(stop_event):
             [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
             if (not math.isnan(temp) and temp != -1):
                 temp = temp * 10 / 256.0
-                t = str(temp)
-                streamer.log("Temperature (C)", t)
+                streamer.log("Temperature (C)", temp)
             
             if (not math.isnan(hum) and hum != -1):
                 hum = hum * 10 / 256.0
-                h = str(hum)
-                streamer.log("Humidity (%)", h)
+                streamer.log("Humidity (%)", hum)
 
             setRGB(0,128,64)
             setRGB(0,255,0)
-            setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
+            setText("Temp:" + str(temp) + "C      " + "Humidity :" + str(hum) + "%")
         except (IOError, TypeError):
             print "DHT Error"
 
