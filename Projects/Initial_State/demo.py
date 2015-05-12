@@ -19,7 +19,7 @@ def stream_temp(stop_event):
     while (not stop_event.is_set()):
         try:
             # get temp and humidity from DHT sensor
-            [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
+            [ temp,hum ] = grovepi.dht(dht_sensor_port, 1)
             if (not math.isnan(temp) and temp != -1):
                 temp = temp * 10 / 256.0
                 streamer.log("Temperature (C)", temp)
@@ -40,7 +40,8 @@ def stream_sound(stop_event):
     while (not stop_event.is_set()):
         try:
             sound_level = grovepi.analogRead(sound_sensor)
-            streamer.log("Sound Level", sound_level)
+            if (sound_level < 20000):
+                streamer.log("Sound Level", sound_level)
         except (IOError, TypeError):
             print "Sound Error"
         time.sleep(.5)
@@ -51,7 +52,8 @@ def stream_distance(stop_event):
     while (not stop_event.is_set()):
         try:
             distance = grovepi.ultrasonicRead(ult_ranger)
-            streamer.log("Distance (cm)", distance)
+            if (distance < 20000):
+                streamer.log("Distance (cm)", distance)
         except (IOError, TypeError):
             print "Range Error"
         time.sleep(.5)
@@ -62,7 +64,8 @@ def stream_light(stop_event):
     while (not stop_event.is_set()):
         try:
             light_intensity = grovepi.analogRead(light_sensor)
-            streamer.log("Light Intensity", light_intensity)
+            if (light_intensity < 20000):
+                streamer.log("Light Intensity", light_intensity)
         except (IOError, TypeError):
             print "Light Error"
         time.sleep(.5)
