@@ -9,10 +9,10 @@ streamer = Streamer(bucket_name="GrovePi",
     ini_file_location="./isstreamer.ini",
     buffer_size=30)
 
-dht_sensor_port = 7		# Connect the DHt sensor to port 7
+dht_sensor_port = 4		# Connect the DHt sensor to port 7
 sound_sensor = 0        # port A0
 light_sensor = 1        # port A1
-ult_ranger = 4
+ult_ranger = 2
 
 def stream_temp(stop_event):
     while (not stop_event.is_set()):
