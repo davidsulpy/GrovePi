@@ -78,12 +78,13 @@ if __name__ == "__main__":
     t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
     t_light.daemon = False
 
-    try:
-        t_temp.start()
-        t_sound.start()
-        t_dist.start()
-        t_light.start()
-    except KeyboardInterrupt:
-        print "Found Keyboard Interrupt"
-        stop_event.set()
-        streamer.close()
+
+    t_temp.start()
+    t_sound.start()
+    t_dist.start()
+    t_light.start()
+
+    stop = raw_input("press [ENTER] to end")
+    
+    stop_event.set()
+    streamer.close()
