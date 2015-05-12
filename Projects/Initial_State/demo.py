@@ -1,5 +1,5 @@
 import time
-from grovepi import *
+import grovepi
 #from grove_rgb_lcd import *
 from ISStreamer.Streamer import Streamer
 
