@@ -19,10 +19,10 @@ def stream_temp(stop_event):
         try:
             # get temp and humidity from DHT sensor
             [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
-            streamer.log("Temperature (C)", temp)
-            streamer.log("Humidity (%)", hum)
             t = str(temp)
             h = str(hum)
+            streamer.log("Temperature (C)", t)
+            streamer.log("Humidity (%)", h)
 
             setRGB(0,128,64)
             setRGB(0,255,0)
