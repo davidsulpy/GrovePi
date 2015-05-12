@@ -1,5 +1,4 @@
 import time
-import decimal
 from threading import Thread, Event
 import grovepi
 from grove_rgb_lcd import *
@@ -10,91 +9,27 @@ streamer = Streamer(bucket_name="GrovePi",
     ini_file_location="./isstreamer.ini",
     buffer_size=20)
 
-dht_sensor_port = 4		# Connect the DHt sensor to port 7
+dht_sensor_port = 7		# Connect the DHt sensor to port 7
 sound_sensor = 0        # port A0
 light_sensor = 1        # port A1
 ult_ranger = 2
 
 def stream_temp(stop_event):
-    # get temp and humidity from DHT sensor
-    lastTemp = 0.1          # initialize a floating point temp variable
-    lastHum = 0.1           # initialize a floating Point humidity variable
-    tooLow = 62.0           # Lower limit in fahrenheit
-    justRight = 68.0        # Perfect Temp in fahrenheit
-    tooHigh = 74.0          # Temp Too high
-
-
-    # Function Definitions
-    def CtoF( tempc ):
-       "This converts celcius to fahrenheit"
-       tempf = round((tempc * 1.8) + 32, 2);
-       return tempf;
-
-    def FtoC( tempf ):
-       "This converts fahrenheit to celcius"
-       tempc = round((tempf - 32) / 1.8, 2)
-       return tempc;
-
-    def calcColorAdj(variance):     # Calc the adjustment value of the background color
-        "Because there is 6 degrees mapping to 255 values, 42.5 is the factor for 12 degree spread"
-        factor = 42.5;
-        adj = abs(int(factor * variance));
-        if adj > 255:
-            adj = 255;
-        return adj;
-
-    def calcBG(ftemp):
-        "This calculates the color value for the background"
-        variance = ftemp - justRight;   # Calculate the variance
-        adj = calcColorAdj(variance);   # Scale it to 8 bit int
-        bgList = [0,0,0]               # initialize the color array
-        if(variance < 0):
-            bgR = 0;                    # too cold, no red
-            bgB = adj;                  # green and blue slide equally with adj
-            bgG = 255 - adj;
-            
-        elif(variance == 0):             # perfect, all on green
-            bgR = 0;
-            bgB = 0;
-            bgG = 255;
-            
-        elif(variance > 0):             #too hot - no blue
-            bgB = 0;
-            bgR = adj;                  # Red and Green slide equally with Adj
-            bgG = 255 - adj;
-            
-        bgList = [bgR,bgG,bgB]          #build list of color values to return
-        return bgList;
-
     while (not stop_event.is_set()):
         try:
-            temp = 0.01
-            hum = 0.01
-            [ temp,hum ] = grovepi.dht(dht_sensor_port,1)       #Get the temperature and Humidity from the DHT sensor
-            if (CtoF(temp) != lastTemp) and (hum != lastHum) and not math.isnan(temp) and not math.isnan(hum):
-                    #print "lowC : ",FtoC(tooLow),"C\t\t","rightC  : ", FtoC(justRight),"C\t\t","highC : ",FtoC(tooHigh),"C" # comment these three lines
-                    #print "lowF : ",tooLow,"F\t\tjustRight : ",justRight,"F\t\ttoHigh : ",tooHigh,"F"                       # if no monitor display
-                    #print "tempC : ", temp, "C\t\ttempF : ",CtoF(temp),"F\t\tHumidity =", hum,"%\r\n"
-                    
-                    lastHum = hum          # save temp & humidity values so that there is no update to the RGB LCD
-                    ftemp = CtoF(temp)     # unless the value changes
-                    lastTemp = ftemp       # this reduces the flashing of the display
-                    # print "ftemp = ",ftemp,"  temp = ",temp   # this was just for test and debug
-                    
-                    bgList = calcBG(ftemp)           # Calculate background colors
-                    
-                    t = str(ftemp)   # "stringify" the display values
-                    h = str(hum)
+            # get temp and humidity from DHT sensor
+            [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
+            t = str(temp)
+            h = str(hum)
+            streamer.log("Temperature (C)", t)
+            streamer.log("Humidity (%)", h)
 
-                    streamer.log("Temperature (F)", t)
-                    streamer.log("Humidity (%)", h)
-                    # print "(",bgList[0],",",bgList[1],",",bgList[2],")"   # this was to test and debug color value list
-                    setRGB(bgList[0],bgList[1],bgList[2])   # parse our list into the color settings
-                    setText("Temp:" + t + "F      " + "Humidity :" + h + "%") # update the RGB LCD display
-                    
-        except (IOError,TypeError) as e:
-            print "Error" + str(e)
-
+            setRGB(0,128,64)
+            setRGB(0,255,0)
+            setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
+        except (IOError, TypeError):
+            print "DHT Error"
+        time.sleep(.5)
 
     print "dht stream finished"
 
