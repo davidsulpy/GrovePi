@@ -1,4 +1,5 @@
 import time
+import decimal
 from threading import Thread, Event
 import grovepi
 from grove_rgb_lcd import *
