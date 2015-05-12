@@ -1,4 +1,5 @@
 import time
+import math
 from threading import Thread, Event
 import grovepi
 from grove_rgb_lcd import *
@@ -19,17 +20,21 @@ def stream_temp(stop_event):
         try:
             # get temp and humidity from DHT sensor
             [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
-            t = str(temp)
-            h = str(hum)
-            streamer.log("Temperature (C)", t)
-            streamer.log("Humidity (%)", h)
+            if (not math.isnan(temp) and temp != -1):
+                temp = temp * 10 / 256.0
+                t = str(temp)
+                streamer.log("Temperature (C)", t)
+            
+            if (not math.isnan(hum) and hum != -1):
+                hum = hum * 10 / 256.0
+                h = str(hum)
+                streamer.log("Humidity (%)", h)
 
             setRGB(0,128,64)
             setRGB(0,255,0)
             setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
         except (IOError, TypeError):
             print "DHT Error"
-        time.sleep(.5)
 
     print "dht stream finished"
 
