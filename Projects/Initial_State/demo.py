@@ -7,7 +7,7 @@ from ISStreamer.Streamer import Streamer
 streamer = Streamer(bucket_name="GrovePi", 
     #bucket_key="grovepi_20150512", 
     ini_file_location="./isstreamer.ini",
-    buffer_size=30)
+    buffer_size=20)
 
 dht_sensor_port = 4		# Connect the DHt sensor to port 7
 sound_sensor = 0        # port A0
