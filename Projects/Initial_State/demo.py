@@ -29,11 +29,11 @@ def stream_temp(stop_event):
                 streamer.log("Humidity (%)", hum)
 
             setRGB(0,128,64)
-            setRGB(0,255,0)
-            setText("Temp:" + str(temp) + "C      " + "Humidity :" + str(hum) + "%")
+            setText("Temp:" + str(temp) + "C\n" + "Humidity :" + str(hum) + "%")
         except (IOError, TypeError):
             print "DHT Error"
-
+    
+    setRGB(0,255,0)
     print "dht stream finished"
 
 def stream_sound(stop_event):
