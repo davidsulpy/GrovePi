@@ -1,6 +1,6 @@
 import time
 import grovepi
-#from grove_rgb_lcd import *
+from grove_rgb_lcd import *
 from ISStreamer.Streamer import Streamer
 
 streamer = Streamer(bucket_name="GrovePi", bucket_key="grovepi_20150512", ini_file_location="./isstreamer.ini")
@@ -18,12 +18,12 @@ def sensor_read():
             [ temp,hum ] = grovepi.dht(dht_sensor_port,1)
             streamer.log("Temperature (C)", temp)
             streamer.log("Humidity (%)", hum)
-            #t = str(temp)
-            #h = str(hum)
+            t = str(temp)
+            h = str(hum)
 
-            #setRGB(0,128,64)
-            #setRGB(0,255,0)
-            #setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
+            setRGB(0,128,64)
+            setRGB(0,255,0)
+            setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
         except (IOError, TypeError):
             print "DHT Error"
 
