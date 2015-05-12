@@ -29,7 +29,9 @@ def stream_temp(stop_event):
             setText("Temp:" + t + "C      " + "Humidity :" + h + "%")
         except (IOError, TypeError):
             print "DHT Error"
-        time.sleep(.1)
+        time.sleep(.5)
+
+    print "dht stream finished"
 
 def stream_sound(stop_event):
     while (not stop_event.is_set()):
@@ -38,7 +40,9 @@ def stream_sound(stop_event):
             streamer.log("Sound Level", sound_level)
         except (IOError, TypeError):
             print "Sound Error"
-        time.sleep(.1)
+        time.sleep(.5)
+
+    print "sound stream finished"
 
 def stream_distance(stop_event):
     while (not stop_event.is_set()):
@@ -47,7 +51,9 @@ def stream_distance(stop_event):
             streamer.log("Distance (cm)", distance)
         except (IOError, TypeError):
             print "Range Error"
-        time.sleep(.1)
+        time.sleep(.5)
+
+    print "distance stream finished"
 
 def stream_light(stop_event):
     while (not stop_event.is_set()):
@@ -56,7 +62,9 @@ def stream_light(stop_event):
             streamer.log("Light Intensity", light_intensity)
         except (IOError, TypeError):
             print "Light Error"
-        time.sleep(.1)
+        time.sleep(.5)
+
+    print "light stream finished"
 
 
 if __name__ == "__main__":
