@@ -1,6 +1,5 @@
 import time
 import math
-from threading import Thread, Event
 from grovepi import *
 from grove_rgb_lcd import *
 from ISStreamer.Streamer import Streamer
@@ -15,82 +14,59 @@ sound_sensor = 0        # port A0
 light_sensor = 1        # port A1
 ult_ranger = 2
 
-def stream_temp(stop_event):
-    while (not stop_event.is_set()):
-        try:
-            # get temp and humidity from DHT sensor
-            [ temp,hum ] = dht(dht_sensor_port, 0)
-            if (not math.isnan(temp) and temp != -1):
-                #temp = temp * 10 / 256.0
-                streamer.log("Temperature (C)", temp)
-            
-            if (not math.isnan(hum) and hum != -1):
-                #hum = hum * 10 / 256.0
-                streamer.log("Humidity (%)", hum)
+def read_temp():
+    try:
+        # get temp and humidity from DHT sensor
+        [ temp,hum ] = dht(dht_sensor_port, 0)
+        if (not math.isnan(temp) and temp != -1):
+            #temp = temp * 10 / 256.0
+            streamer.log("Temperature (C)", temp)
+        
+        if (not math.isnan(hum) and hum != -1):
+            #hum = hum * 10 / 256.0
+            streamer.log("Humidity (%)", hum)
 
-            setRGB(0,128,64)
-            setText("Temp:" + str(temp) + "C\n" + "Humidity :" + str(hum) + "%")
-        except (IOError, TypeError):
-            print "DHT Error"
-    
-    setRGB(0,255,0)
-    print "dht stream finished"
+        setRGB(0,128,64)
+        setText("Temp:" + str(temp) + "C\n" + "Humidity :" + str(hum) + "%")
+    except (IOError, TypeError):
+        print "DHT Error"
 
-def stream_sound(stop_event):
-    while (not stop_event.is_set()):
-        try:
-            sound_level = analogRead(sound_sensor)
-            if (sound_level < 20000):
-                streamer.log("Sound Level", sound_level)
-        except (IOError, TypeError):
-            print "Sound Error"
-        time.sleep(.5)
+def read_sound():
+    try:
+        sound_level = analogRead(sound_sensor)
+        if (sound_level < 20000 and sound_level > -1):
+            streamer.log("Sound Level", sound_level)
+    except (IOError, TypeError):
+        print "Sound Error"
 
-    print "sound stream finished"
+def read_distance():
+    try:
+        distance = ultrasonicRead(ult_ranger)
+        if (distance < 20000 and distance > -1):
+            streamer.log("Distance (cm)", distance)
+    except (IOError, TypeError):
+        print "Range Error"
 
-def stream_distance(stop_event):
-    while (not stop_event.is_set()):
-        try:
-            distance = ultrasonicRead(ult_ranger)
-            if (distance < 20000):
-                streamer.log("Distance (cm)", distance)
-        except (IOError, TypeError):
-            print "Range Error"
-        time.sleep(.5)
+def read_light():
+    try:
+        light_intensity = analogRead(light_sensor)
+        if (light_intensity < 20000 and light_intensity > -1):
+            streamer.log("Light Intensity", light_intensity)
+    except (IOError, TypeError):
+        print "Light Error"
 
-    print "distance stream finished"
-
-def stream_light(stop_event):
-    while (not stop_event.is_set()):
-        try:
-            light_intensity = analogRead(light_sensor)
-            if (light_intensity < 20000):
-                streamer.log("Light Intensity", light_intensity)
-        except (IOError, TypeError):
-            print "Light Error"
-        time.sleep(.5)
-
-    print "light stream finished"
-
+def stream_sensors():
+    try:
+        while True:
+            read_light()
+            read_distance()
+            read_sound()
+            read_temp()
+            time.sleep(.2)
+    except KeyboardInterrupt:
+        print "keyboard interrupt detected"
 
 if __name__ == "__main__":
-    stop_event = Event()
-    t_temp = Thread(target=stream_temp, kwargs={"stop_event": stop_event})
-    t_temp.daemon = False
-    t_sound = Thread(target=stream_sound, kwargs={"stop_event": stop_event})
-    t_sound.daemon = False
-    t_dist = Thread(target=stream_distance, kwargs={"stop_event": stop_event})
-    t_dist.daemon = False
-    t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
-    t_light.daemon = False
-
-
-    t_temp.start()
-    t_sound.start()
-    t_dist.start()
-    t_light.start()
-
-    stop = raw_input("press [ENTER] to end")
-
-    stop_event.set()
+    print "Press Ctl+C to stop"
+    stream_sensors()
     streamer.close()
