@@ -39,7 +39,7 @@ def stream_temp(stop_event):
 def stream_sound(stop_event):
     while (not stop_event.is_set()):
         try:
-            sound_level = grovepi.analogRead(sound_sensor)
+            sound_level = analogRead(sound_sensor)
             if (sound_level < 20000):
                 streamer.log("Sound Level", sound_level)
         except (IOError, TypeError):
@@ -51,7 +51,7 @@ def stream_sound(stop_event):
 def stream_distance(stop_event):
     while (not stop_event.is_set()):
         try:
-            distance = grovepi.ultrasonicRead(ult_ranger)
+            distance = ultrasonicRead(ult_ranger)
             if (distance < 20000):
                 streamer.log("Distance (cm)", distance)
         except (IOError, TypeError):
@@ -63,7 +63,7 @@ def stream_distance(stop_event):
 def stream_light(stop_event):
     while (not stop_event.is_set()):
         try:
-            light_intensity = grovepi.analogRead(light_sensor)
+            light_intensity = analogRead(light_sensor)
             if (light_intensity < 20000):
                 streamer.log("Light Intensity", light_intensity)
         except (IOError, TypeError):
@@ -77,18 +77,18 @@ if __name__ == "__main__":
     stop_event = Event()
     t_temp = Thread(target=stream_temp, kwargs={"stop_event": stop_event})
     t_temp.daemon = False
-    #t_sound = Thread(target=stream_sound, kwargs={"stop_event": stop_event})
-    #t_sound.daemon = False
-    #t_dist = Thread(target=stream_distance, kwargs={"stop_event": stop_event})
-    #t_dist.daemon = False
-    #t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
-    #t_light.daemon = False
+    t_sound = Thread(target=stream_sound, kwargs={"stop_event": stop_event})
+    t_sound.daemon = False
+    t_dist = Thread(target=stream_distance, kwargs={"stop_event": stop_event})
+    t_dist.daemon = False
+    t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
+    t_light.daemon = False
 
 
     t_temp.start()
-    #t_sound.start()
-    #t_dist.start()
-    #t_light.start()
+    t_sound.start()
+    t_dist.start()
+    t_light.start()
 
     stop = raw_input("press [ENTER] to end")
 
