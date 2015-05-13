@@ -1,7 +1,7 @@
 import time
 import math
 from threading import Thread, Event
-import grovepi
+from grovepi import *
 from grove_rgb_lcd import *
 from ISStreamer.Streamer import Streamer
 
@@ -19,7 +19,7 @@ def stream_temp(stop_event):
     while (not stop_event.is_set()):
         try:
             # get temp and humidity from DHT sensor
-            [ temp,hum ] = grovepi.dht(dht_sensor_port, 0)
+            [ temp,hum ] = dht(dht_sensor_port, 0)
             if (not math.isnan(temp) and temp != -1):
                 #temp = temp * 10 / 256.0
                 streamer.log("Temperature (C)", temp)
@@ -77,18 +77,18 @@ if __name__ == "__main__":
     stop_event = Event()
     t_temp = Thread(target=stream_temp, kwargs={"stop_event": stop_event})
     t_temp.daemon = False
-    t_sound = Thread(target=stream_sound, kwargs={"stop_event": stop_event})
-    t_sound.daemon = False
-    t_dist = Thread(target=stream_distance, kwargs={"stop_event": stop_event})
-    t_dist.daemon = False
-    t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
-    t_light.daemon = False
+    #t_sound = Thread(target=stream_sound, kwargs={"stop_event": stop_event})
+    #t_sound.daemon = False
+    #t_dist = Thread(target=stream_distance, kwargs={"stop_event": stop_event})
+    #t_dist.daemon = False
+    #t_light = Thread(target=stream_light, kwargs={"stop_event": stop_event})
+    #t_light.daemon = False
 
 
     t_temp.start()
-    t_sound.start()
-    t_dist.start()
-    t_light.start()
+    #t_sound.start()
+    #t_dist.start()
+    #t_light.start()
 
     stop = raw_input("press [ENTER] to end")
 
