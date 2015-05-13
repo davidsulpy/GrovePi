@@ -62,7 +62,7 @@ def stream_sensors():
             read_distance()
             read_sound()
             read_temp()
-            time.sleep(.2)
+            streamer.flush()
     except KeyboardInterrupt:
         print "keyboard interrupt detected"
 
